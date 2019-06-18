@@ -1,0 +1,29 @@
+#!/bin/sh
+#SBATCH --job-name=trimal
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=50mb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/convert.%A.%a.out
+#SBATCH --error=logs/convert.%A.%a.err
+#SBATCH --qos=soltis-b
+ 
+module load trimal
+
+
+
+echo -e "\nInfo: Starting a job on $(date) on $(hostname) in $(pwd).\n"
+
+for i in paralogs/alignments/keepers/*.fasta ;
+
+do
+
+  name=`basename $i .fasta`
+  file=${i}
+  outfile="paralogs/alignments/keepers/Trimal50/Trimal50_"${name}".fasta"
+  trimal -in $file -out $outfile -gt 0.5
+
+done

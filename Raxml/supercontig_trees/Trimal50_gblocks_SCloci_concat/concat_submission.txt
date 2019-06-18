@@ -1,0 +1,24 @@
+#!/bin/sh
+#SBATCH --job-name=rax_concat
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=10gb
+#SBATCH --time=96:00:00
+#SBATCH --output=logs/rax_single.%A.out
+#SBATCH --error=logs/rax_single.%A.err
+#SBATCH --qos=soltis-b
+
+module load raxml
+
+file="/ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Alignment/reseq_alignments/SC_loci/Trimal_50/GB_fastas/noninterleaved/done/fasta_nospace/phylip/concat/Trimal_50_reseq_gblocks3_concat.phy"
+name=`basename $file .phy`
+
+echo "Running RAxML on ${name}"
+partition_file="/ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Alignment/reseq_alignments/SC_loci/Trimal_50/GB_fastas/noninterleaved/done/fasta_nospace/phylip/concat/Trimal_50_reseq_gblocks3_partition_file.txt"
+raxmlHPC-PTHREADS-SSE3 -f a -m GTRCAT -s $file -n $name -x $RANDOM -p $RANDOM -N 1000 -T $SLURM_CPUS_PER_TASK -q $partition_file
+
+
+#######

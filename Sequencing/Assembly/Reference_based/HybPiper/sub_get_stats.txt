@@ -1,0 +1,18 @@
+#!/bin/sh
+#SBATCH --job-name=Hybpip_stats
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=100mb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/HybP_NR.%A.%a.out
+#SBATCH --error=logs/HybP_NR.%A.%a.err
+
+
+module load python exonerate bwa samtools spades velvet cap3 ncbi_blast parallel
+
+python ../../../HybPiper_1.3.1/get_seq_lengths.py reduced_baits.fasta namelist.txt dna > stats/hybpiper_seq_lengths_reseq.txt
+
+python ../../../HybPiper_1.3.1/hybpiper_stats.py stats/hybpiper_seq_lengths.txt namelist.txt > stats/hybpiper_stats_reseq.txt

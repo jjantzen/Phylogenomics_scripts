@@ -1,0 +1,50 @@
+#!/bin/sh
+#SBATCH --job-name=Hybpip_genes
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=10
+#SBATCH --mem=70gb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/HybP_NR.%A.%a.out
+#SBATCH --error=logs/HybP_NR.%A.%a.err
+#SBATCH --array=0-144%10
+echo -e "\nInfo: Starting a job on $(date) on $(hostname) in $(pwd).\n"
+
+module load python exonerate bwa samtools spades velvet cap3 ncbi_blast parallel
+
+
+#Run script from "HybPiper" folder
+cd /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/Normalized/;
+
+DIRS=( $(ls -d *) )
+
+DIR="${DIRS[$SLURM_ARRAY_TASK_ID]}"
+
+R1FILE="$DIR"/*-READ1.fastq*.fq;
+  
+R2FILE="$DIR"/*-READ2.fastq*.fq;
+ 
+#R1Single="$DIR"/*-READ1-single.fastq;
+  
+#R2Single="$DIR"/*-READ2-single.fastq;
+  
+#name=`basename ${R1FILE} _READ1.fastq`;
+  
+echo "Running HybPiper on ${DIR}";
+  
+#forward="${SAMPLE}_READ1.fastq";
+  
+#reverse="${SAMPLE}_READ2.fastq";
+
+##NOT WORKING
+#DIR_short="${DIR::-1}";
+
+echo -e "python /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/HybPiper_1.3.1/reads_first.py -r ${R1FILE} ${R2FILE} -b /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Assembly/Plastid/HybPiper/plastid_genome.fasta --cpu $SLURM_CPUS_ON_NODE --bwa --prefix /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Assembly/Plastid/HybPiper/${DIR}";
+
+python /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/HybPiper_1.3.1/reads_first.py -r ${R1FILE} ${R2FILE} -b /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Assembly/Plastid/HybPiper_genes/plastid_seqs_noamb.fasta --cpu $SLURM_CPUS_ON_NODE --bwa --prefix /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Assembly/Plastid/HybPiper_genes/${DIR};
+
+echo -e "\nInfo: Job finished  on $(date)"
+
+#--unpaired ${R1Single} --unpaired ${R2Single}

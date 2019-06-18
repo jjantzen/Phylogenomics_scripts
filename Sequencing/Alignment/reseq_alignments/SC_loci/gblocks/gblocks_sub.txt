@@ -1,0 +1,23 @@
+#!/bin/sh
+#SBATCH --job-name=gblocks
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1gb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/mafft.%A.%a.out
+#SBATCH --error=logs/mafft.%A.%a.err
+
+
+
+#######SBATCH --array=0-372%10
+
+module load gblocks
+
+
+
+for file in ../Trimal_90/*.fasta; do 
+Gblocks $file -t d -b5 h -e -trim
+done;
