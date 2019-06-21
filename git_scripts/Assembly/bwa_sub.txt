@@ -1,0 +1,52 @@
+#!/bin/sh
+#SBATCH --job-name=bwa
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=50mb
+#SBATCH --time=72:00:00
+#SBATCH --output=logs/bwa.%A.%a.out
+#SBATCH --error=logs/bwa.%A.%a.err
+#SBATCH --qos=soltis-b
+
+
+module load samtools
+module load bcftools
+module load bwa
+
+# Remember to index reference using bwa index reference.fasta
+
+mkdir tmp
+#mkdir chloroplast_consensus_sequences
+
+DIRS=($(ls -d /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/cleaned_trimmed_reads/*/))
+
+for DIR in ${DIRS[@]}; do
+R1FILE="${DIR}"*-READ1.fastq;
+  
+R2FILE="${DIR}"*-READ2.fastq;
+
+HEAD=`echo $DIR | cut -d'/' -f2- | rev | cut -d'/' -f2 | rev`
+
+
+#first run
+#R1FILE="/ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/cleaned_trimmed_reads/003_Aegopogon_clean/003_Aegopogon_clean-READ1.fastq"
+#R2FILE="/ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/cleaned_trimmed_reads/003_Aegopogon_clean/003_Aegopogon_clean-READ2.fastq"
+
+#R1FILE="/ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/Normalized/003_Aegopogon_clean/003_Aegopogon_clean-READ1.fastq.normalized_K25_maxC30_minC0_pctSD10000.fq"
+#R2FILE="/ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Cleaning/Data/Processed/Normalized/003_Aegopogon_clean/003_Aegopogon_clean-READ2.fastq.normalized_K25_maxC30_minC0_pctSD10000.fq"
+
+#R1HEAD="003_Aegopogon_clean"
+
+#Run bwa for normalized reads
+bwa mem -t 8 plastid_bowtie/plastid_genome_T_longifolia.fasta $R1FILE $R2FILE > temp.sam
+
+# Make sure to set haploid for chloroplast data
+samtools sort -T ./tmp/aln.sorted -o temp.bam temp.sam
+samtools mpileup -uf plastid_bowtie/plastid_genome_T_longifolia.fasta temp.bam > bcf.tmp
+bcftools call --ploidy 1 -c bcf.tmp | vcfutils.pl vcf2fq > ./chloroplast_consensus_sequences/${HEAD}.consensus.fq
+rm temp.sam temp.bam bcf.tmp ./tmp/aln.sorted*
+
+done

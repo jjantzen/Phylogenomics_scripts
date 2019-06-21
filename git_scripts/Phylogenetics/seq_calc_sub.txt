@@ -1,0 +1,4 @@
+for file in /ufrc/soltis/jjantzen/Dissertation/Analysis/Sequencing/Methods_paper_PA/Percent_similarity_calc/Retrieved_all_samples/HybPiper_seqs_supercontig_all/*.fasta; do
+	python calc_length.py $file > ${file%.fasta}_counts.txt; 
+done; 
+    

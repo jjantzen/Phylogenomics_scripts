@@ -1,0 +1,19 @@
+#!/bin/sh
+#SBATCH --job-name=paralog
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem-per-cpu=50mb
+#SBATCH --time=04:00:00
+#SBATCH --output=logs/paralog.%j.out
+#SBATCH --error=logs/paralog.%j.err
+
+module load python
+
+while read i
+do
+echo $i
+python ../../../HybPiper_1.3.1/paralog_investigator.py $i
+done < namelist.txt
