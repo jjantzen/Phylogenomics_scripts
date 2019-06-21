@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --job-name=astral_2nd
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=jjantzen@ufl.edu 
+#SBATCH --mail-user=user@ufl.edu 
 #SBATCH --qos=soltis-b
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=3

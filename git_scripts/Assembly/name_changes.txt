@@ -2,7 +2,7 @@
 #SBATCH --job-name=sed  #A name for your job
 #SBATCH -o sedt.%j.log   #Name output file
 #SBATCH --mail-type=ALL   #What emails you want
-#SBATCH --mail-user=jjantzen@ufl.edu   #Where
+#SBATCH --mail-user=user@ufl.edu   #Where
 #SBATCH --ntasks 1   #Request a single processor
 #SBATCH --mem-per-mvu=50mb   #Per processor memory request
 #SBATCH --time 1:00:00   #Walltime in hh:mm:ss or d-hh:mm:ss

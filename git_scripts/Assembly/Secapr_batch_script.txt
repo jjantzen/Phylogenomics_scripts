@@ -2,7 +2,7 @@
 #SBATCH --job-name=secapr_clean  #A name for your job
 #SBATCH -o job_%j.out   #Name output file
 #SBATCH --mail-type=ALL   #What emails you want
-#SBATCH --mail-user=jjantzen@ufl.edu   #Where
+#SBATCH --mail-user=user@ufl.edu   #Where
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
